@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Logging;
 using TestGardenUniversity.Data;
 using TestGardenUniversity.Models;
 
@@ -13,7 +14,12 @@ namespace TestGardenUniversity.Controllers
     public class StudentsController : Controller
     {
         private readonly GardenSchoolContext _context;
-
+        //error: can't have two distinct constructors 
+        //private readonly ILogger _logger;
+        //public StudentsController(ILogger<StudentsController> logger)
+        //{
+        //    _logger = logger;
+        //}
         public StudentsController(GardenSchoolContext context)
         {
             _context = context;
@@ -63,19 +69,25 @@ namespace TestGardenUniversity.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    //student.Enrollments = new Collection<Enrollment>();
                     _context.Add(student);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                return View(student);
+                
             }
-            catch (DbUpdateException ex)
-            { 
-
+            catch (DbUpdateException /*ex*/)
+            {
+                //log error, can't use below code as from program.cs uses services.
+                //var logger = Services.GetRequiredService<ILogger<Program>>();
+                //logger.LogError(ex, "An error occurred while seeding the database.");
+                //_logger.LogInformation("DbUpdateException Caught on /Student/Create POST", ex);
                 ModelState.AddModelError("", "Unable to save changes. " +
             "Try again, and if the problem persists " +
             "see your system administrator.");
             }
+            
+            return View(student);
         }
 
         // GET: Students/Edit/5
@@ -97,6 +109,36 @@ namespace TestGardenUniversity.Controllers
         // POST: Students/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPost(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var studentToUpdate = await _context.Student.FirstOrDefaultAsync(s => s.ID == id);
+            if (await TryUpdateModelAsync<Student>(
+                studentToUpdate,
+                "",
+                s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate))
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException /* ex */)
+                {
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
+            }
+            return View(studentToUpdate);
+        }
+        /*
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,LastName,FirstMidName,EnrollmentDate")] Student student)
@@ -128,26 +170,56 @@ namespace TestGardenUniversity.Controllers
             }
             return View(student);
         }
-
+        */
         // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
-            if (id == null || _context.Student == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var student = await _context.Student
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (student == null)
             {
                 return NotFound();
+            }
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem persists " +
+                    "see your system administrator.";
             }
 
             return View(student);
         }
 
         // POST: Students/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var student = await _context.Student.FindAsync(id);
+            if (student == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Student.Remove(student);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+            }
+        }
+        /*
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -165,7 +237,7 @@ namespace TestGardenUniversity.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        */
         private bool StudentExists(int id)
         {
           return _context.Student.Any(e => e.ID == id);
