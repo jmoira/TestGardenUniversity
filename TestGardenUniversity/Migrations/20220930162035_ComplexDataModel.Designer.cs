@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestGardenUniversity.Data;
 
@@ -11,9 +12,10 @@ using TestGardenUniversity.Data;
 namespace TestGardenUniversity.Migrations
 {
     [DbContext(typeof(GardenSchoolContext))]
-    partial class GardenSchoolContextModelSnapshot : ModelSnapshot
+    [Migration("20220930162035_ComplexDataModel")]
+    partial class ComplexDataModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
