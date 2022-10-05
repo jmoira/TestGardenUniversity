@@ -13,7 +13,8 @@ namespace TestGardenUniversity.Migrations
                 table: "Course",
                 type: "nvarchar(50)",
                 maxLength: 50,
-                nullable: false,
+                nullable: true,
+                //tutorial did not instruct nullable true, but final code does have true
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
             /*
@@ -69,7 +70,7 @@ namespace TestGardenUniversity.Migrations
                 {
                     DepartmentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Budget = table.Column<decimal>(type: "money", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InstructorID = table.Column<int>(type: "int", nullable: true)
@@ -99,7 +100,7 @@ namespace TestGardenUniversity.Migrations
                 columns: table => new
                 {
                     InstructorID = table.Column<int>(type: "int", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Location = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -166,7 +167,7 @@ namespace TestGardenUniversity.Migrations
                 name: "Title",
                 table: "Course",
                 type: "nvarchar(max)",
-                nullable: false,
+                nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(50)",
                 oldMaxLength: 50);
