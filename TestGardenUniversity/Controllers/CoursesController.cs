@@ -99,7 +99,7 @@ namespace TestGardenUniversity.Controllers
             }
 
             var courseToUpdate = await _context.Courses.FirstOrDefaultAsync(c => c.CourseID == id);
-
+            
             if (await TryUpdateModelAsync<Course>(courseToUpdate, "", c => c.Credits, c => c.DepartmentID, c => c.Title))
             {
                 try
@@ -116,6 +116,10 @@ namespace TestGardenUniversity.Controllers
                 "see your system administrator.");
                 }
             }
+            validationErrors = ModelState.Values.Where(E => E.Errors.Count > 0)
+    .SelectMany(E => E.Errors)
+    .Select(E => E.ErrorMessage)
+    .ToList();
             PopulateDepartmentsDropDownList(courseToUpdate.DepartmentID);
             return View(courseToUpdate);
         }
