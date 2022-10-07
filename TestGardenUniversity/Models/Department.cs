@@ -20,6 +20,8 @@ namespace TestGardenUniversity.Models
         public DateTime StartDate { get; set; }
 
         public int? InstructorID { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         public Instructor Administrator { get; set; }
         public ICollection<Course> Courses { get; set; }
