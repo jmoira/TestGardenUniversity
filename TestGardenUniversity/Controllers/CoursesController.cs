@@ -116,14 +116,14 @@ namespace TestGardenUniversity.Controllers
                 "see your system administrator.");
                 }
             }
-            validationErrors = ModelState.Values.Where(E => E.Errors.Count > 0)
+            /*validationErrors = ModelState.Values.Where(E => E.Errors.Count > 0)
     .SelectMany(E => E.Errors)
     .Select(E => E.ErrorMessage)
-    .ToList();
+    .ToList();*/
             PopulateDepartmentsDropDownList(courseToUpdate.DepartmentID);
             return View(courseToUpdate);
         }
-        private void PopulateDepartmentsDropDownList(object? selectedDepartment = null)
+        private void PopulateDepartmentsDropDownList(object selectedDepartment = null)
         {
             var departmentsQuery = from d in _context.Departments
                                    orderby d.Name
