@@ -13,11 +13,12 @@ namespace TestGardenUniversity.Data
             //context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Student.Any())
+           
+            if (context.People.Any())
             {
                 return;   // DB has been seeded
             }
-
+            
             var students = new Student[]
             {
                 new Student { FirstMidName = "Carson",   LastName = "Alexander",
@@ -37,11 +38,12 @@ namespace TestGardenUniversity.Data
                 new Student { FirstMidName = "Nino",     LastName = "Olivetto",
                     EnrollmentDate = DateTime.Parse("2005-09-01") }
             };
-
+            /*
             foreach (Student s in students)
             {
                 context.Student.Add(s);
-            }
+            }*/
+            context.Student.AddRange(students);
             context.SaveChanges();
 
             var instructors = new Instructor[]
@@ -58,10 +60,7 @@ namespace TestGardenUniversity.Data
                     HireDate = DateTime.Parse("2004-02-12") }
             };
 
-            foreach (Instructor i in instructors)
-            {
-                context.Instructors.Add(i);
-            }
+            context.Instructors.AddRange(instructors);
             context.SaveChanges();
 
             var departments = new Department[]
@@ -80,10 +79,7 @@ namespace TestGardenUniversity.Data
                     InstructorID  = instructors.Single( i => i.LastName == "Kapoor").ID }
             };
 
-            foreach (Department d in departments)
-            {
-                context.Departments.Add(d);
-            }
+            context.Departments.AddRange(departments);
             context.SaveChanges();
 
             var courses = new Course[]
@@ -130,10 +126,7 @@ namespace TestGardenUniversity.Data
                     Location = "Thompson 304" },
             };
 
-            foreach (OfficeAssignment o in officeAssignments)
-            {
-                context.OfficeAssignments.Add(o);
-            }
+            context.OfficeAssignments.AddRange(officeAssignments);
             context.SaveChanges();
 
             var courseInstructors = new CourseAssignment[]
@@ -172,10 +165,7 @@ namespace TestGardenUniversity.Data
                     },
             };
 
-            foreach (CourseAssignment ci in courseInstructors)
-            {
-                context.CourseAssignments.Add(ci);
-            }
+            context.CourseAssignments.AddRange(courseInstructors);
             context.SaveChanges();
 
             var enrollments = new Enrollment[]

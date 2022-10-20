@@ -29,14 +29,17 @@ namespace TestGardenUniversity.Controllers
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Departments == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
+            string query = "SELECT * FROM Department WHERE DepartmentID = {0}";
             var department = await _context.Departments
+                .FromSqlRaw(query, id)
                 .Include(d => d.Administrator)
-                .FirstOrDefaultAsync(m => m.DepartmentID == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
             if (department == null)
             {
                 return NotFound();
